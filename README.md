@@ -5,11 +5,11 @@ I got the idea while playing around with [JFLAP](https://www.jflap.org/)
 ## Roadmap
 List of features I'd like to implement (highly unlikely):
 - [x] Deterministic Finite State Automata
-- [] Non-deterministic Finite State Automata
-- [] Pushdown Automata
-- [] Simple Turing Machines
-- [] Visualize automata described by a config file
-- [] GUI???
+- [ ] Non-deterministic Finite State Automata
+- [ ] Pushdown Automata
+- [ ] Simple Turing Machines
+- [ ] Visualize automata described by a config file
+- [ ] GUI???
 
 ## Example usage
 ```bash
