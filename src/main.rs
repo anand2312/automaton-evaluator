@@ -1,10 +1,12 @@
 mod dfa;
-mod traits;
-use std::path::PathBuf;
+mod fa;
+mod nfa;
 
 use clap::{builder::PossibleValue, Parser, ValueEnum};
 use dfa::DFA;
-use traits::Acceptor;
+use fa::{Acceptor, ReadFAConfig};
+use nfa::NFA;
+use std::path::PathBuf;
 
 #[derive(Debug, Parser)]
 struct Arguments {
@@ -21,17 +23,21 @@ struct Arguments {
 #[derive(Copy, Clone, Debug)]
 enum AutomatonType {
     DFA,
+    NFA,
 }
 
 impl ValueEnum for AutomatonType {
     fn value_variants<'a>() -> &'a [Self] {
-        &[AutomatonType::DFA]
+        &[AutomatonType::DFA, AutomatonType::NFA]
     }
 
     fn to_possible_value<'a>(&self) -> Option<PossibleValue> {
         Some(match self {
             AutomatonType::DFA => {
                 PossibleValue::new("dfa").help("Deterministic Finite State Automata")
+            }
+            AutomatonType::NFA => {
+                PossibleValue::new("nfa").help("Non-deterministic Finite State Automata")
             }
         })
     }
@@ -42,6 +48,15 @@ fn main() {
     match args.automaton {
         AutomatonType::DFA => {
             let machine = DFA::from_file(args.file);
+            let result = if machine.test_string(args.string) {
+                "Accepted"
+            } else {
+                "Rejected"
+            };
+            println!("{}", result);
+        }
+        AutomatonType::NFA => {
+            let machine = NFA::from_file(args.file);
             let result = if machine.test_string(args.string) {
                 "Accepted"
             } else {

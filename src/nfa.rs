@@ -3,7 +3,7 @@ use std::collections::{HashMap, HashSet};
 use std::path::PathBuf;
 
 #[derive(Debug)]
-pub struct DFA {
+pub struct NFA {
     /// Evaluate and validate the DFA described by a given DFAConfig
     states: HashMap<usize, State>,
     initial_state: usize,
@@ -11,16 +11,24 @@ pub struct DFA {
     transitions: Vec<Vec<Vec<char>>>, // adjacency matrix for the state graph
 }
 
-impl ReadFAConfig for DFA {
+impl ReadFAConfig for NFA {
     fn from_file(path: PathBuf) -> Self {
         let config = FAConfig::from_file(path);
         Self::from_config(config)
     }
 
     fn from_config(config: FAConfig) -> Self {
+        let epsilon = '\u{03F5}';
         let mut states = HashMap::new();
         let mut state_to_idx: HashMap<String, usize> = HashMap::new();
         let mut initial_state: usize = usize::MAX;
+
+        // can't use the epsilon variable here because it's a char
+        // and config.alphabet is a HashSet<String>; .contains expects
+        // &String and not a char
+        if config.alphabet.contains(&"\u{03F5}".to_owned()) {
+            panic!("Error reading configuration: Alphabet cannot contain the symbol \u{03F5} as it is used for null transitions");
+        }
 
         for (idx, name) in config.states.into_iter().enumerate() {
             states.insert(
@@ -67,32 +75,58 @@ impl ReadFAConfig for DFA {
                     transitions[*y][*x].push(on.chars().next().expect("Error reading configuration: exhausted string iterator while parsing transitions"));
                 }
             } else {
-                panic!("Error reading configuration: Null transition not allowed in DFAs");
+                // null transition
+                let y = state_to_idx.get(&transition.from).expect(
+                    format!("Error reading configuration: State {} not found in set of all states while parsing transition {}", transition.from, idx + 1).as_str()
+                );
+                let x = state_to_idx.get(&transition.to).expect(
+                    format!("Error reading configuration: State {} not found in set of all states while parsing transition {}", transition.from, idx + 1).as_str()
+                );
+                // let the unicode character epsilon denote a null transition
+                // NOTE: this means that that character cannot be a part of the alphabet!
+                transitions[*y][*x].push(epsilon);
             }
         }
 
-        return DFA {
+        NFA {
             states,
             initial_state,
             final_states,
             transitions,
-        };
+        }
     }
 }
 
-impl Acceptor for DFA {
+impl Acceptor for NFA {
     fn test_string(&self, s: String) -> bool {
-        let mut current_state = self.initial_state;
-        for c in s.chars() {
-            for (idx, neighborhood) in self.transitions[current_state].iter().enumerate() {
-                if neighborhood.is_empty() {
-                    continue;
-                }
-                if neighborhood.contains(&c) {
-                    current_state = idx;
-                }
-            }
-        }
-        self.final_states.contains(&current_state)
+        let chars = s.chars().collect::<Vec<_>>();
+        backtrack(self, self.initial_state, 0, &chars)
     }
+}
+
+fn backtrack(nfa: &NFA, current_state: usize, current_char: usize, chars: &Vec<char>) -> bool {
+    if current_char == chars.len() {
+        let a = nfa.final_states.contains(&current_state);
+        return a;
+    }
+    let mut result = false;
+    for (idx, neighborhood) in nfa.transitions[current_state].iter().enumerate() {
+        if neighborhood.is_empty() {
+            continue;
+        }
+        // I used two separate if statements because if there is a state that can be reached
+        // both by consuming the current character and by null transition, BOTH these options
+        // need to be explored to see if it reaches an accepting state. Using an `else if` for
+        // the second condition would mean that only the first path would be explored (the one by
+        // consuming current character).
+        if neighborhood.contains(&chars[current_char]) {
+            // if ANY of the paths result in an acceptance, the string is accepted
+            result |= backtrack(nfa, idx, current_char + 1, chars);
+        }
+        if neighborhood.contains(&'\u{03F5}') {
+            // use the null transition to go to the next state without consuming a character
+            result |= backtrack(nfa, idx, current_char, chars);
+        }
+    }
+    result
 }
