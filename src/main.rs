@@ -1,10 +1,11 @@
 mod dfa;
-mod traits;
-use std::path::PathBuf;
+mod fa;
+mod nfa;
 
 use clap::{builder::PossibleValue, Parser, ValueEnum};
 use dfa::DFA;
-use traits::Acceptor;
+use fa::{Acceptor, ReadFAConfig};
+use std::path::PathBuf;
 
 #[derive(Debug, Parser)]
 struct Arguments {

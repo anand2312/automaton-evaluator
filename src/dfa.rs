@@ -1,29 +1,6 @@
-use crate::traits::Acceptor;
-use serde::{Deserialize, Serialize};
+use crate::fa::{Acceptor, FAConfig, ReadFAConfig, State};
 use std::collections::{HashMap, HashSet};
-use std::{fs, path::PathBuf};
-
-#[derive(Debug, Deserialize, Serialize)]
-struct DFAConfig {
-    states: Vec<String>,
-    initial_state: String,
-    final_states: Vec<String>,
-    alphabet: HashSet<String>,
-    transitions: Vec<Transition>,
-}
-
-#[derive(Debug, Deserialize, Serialize)]
-struct Transition {
-    from: String,
-    to: String,
-    on: String,
-}
-
-#[derive(Debug, Hash, PartialEq, Eq)]
-struct State {
-    name: String,
-    index: usize,
-}
+use std::path::PathBuf;
 
 #[derive(Debug)]
 pub struct DFA {
@@ -34,21 +11,13 @@ pub struct DFA {
     transitions: Vec<Vec<Vec<char>>>, // adjacency matrix for the state graph
 }
 
-impl DFAConfig {
-    pub fn from_file(path: PathBuf) -> Self {
-        let s = fs::read_to_string(path).unwrap();
-        let parsed: DFAConfig = serde_json::from_str(s.as_str()).unwrap();
-        parsed
-    }
-}
-
-impl DFA {
-    pub fn from_file(path: PathBuf) -> Self {
-        let config = DFAConfig::from_file(path);
+impl ReadFAConfig for DFA {
+    fn from_file(path: PathBuf) -> Self {
+        let config = FAConfig::from_file(path);
         Self::from_config(config)
     }
 
-    fn from_config(config: DFAConfig) -> Self {
+    fn from_config(config: FAConfig) -> Self {
         let mut states = HashMap::new();
         let mut state_to_idx: HashMap<String, usize> = HashMap::new();
         let mut initial_state: usize = usize::MAX;
