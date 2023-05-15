@@ -54,16 +54,20 @@ impl ReadFAConfig for DFA {
 
         let mut transitions = vec![vec![vec![]; states.len()]; states.len()];
         for (idx, transition) in config.transitions.into_iter().enumerate() {
-            if !config.alphabet.contains(&transition.on) {
-                panic!("Error reading configuration: Character {} not present in given alphabet for DFA", transition.on);
+            if let Some(on) = &transition.on {
+                if !config.alphabet.contains(on) {
+                    panic!("Error reading configuration: Character {} not present in given alphabet for DFA", on);
+                } else {
+                    let y = state_to_idx.get(&transition.from).expect(
+                    format!("Error reading configuration: State {} not found in set of all states while parsing transition {}", transition.from, idx + 1).as_str()
+                );
+                    let x = state_to_idx.get(&transition.to).expect(
+                    format!("Error reading configuration: State {} not found in set of all states while parsing transition {}", transition.from, idx + 1).as_str()
+                );
+                    transitions[*y][*x].push(on.chars().next().expect("Error reading configuration: exhausted string iterator while parsing transitions"));
+                }
             } else {
-                let y = state_to_idx.get(&transition.from).expect(
-                    format!("Error reading configuration: State {} not found in set of all states while parsing transition {}", transition.from, idx + 1).as_str()
-                );
-                let x = state_to_idx.get(&transition.to).expect(
-                    format!("Error reading configuration: State {} not found in set of all states while parsing transition {}", transition.from, idx + 1).as_str()
-                );
-                transitions[*y][*x].push(transition.on.chars().next().expect("Error reading configuration: exhausted string iterator while parsing transitions"));
+                panic!("Error reading configuration: Null transition not allowed in DFAs");
             }
         }
 

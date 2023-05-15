@@ -16,7 +16,7 @@ pub struct FAConfig {
 pub struct Transition {
     pub from: String,
     pub to: String,
-    pub on: String,
+    pub on: Option<String>,
 }
 
 #[derive(Debug, Hash, PartialEq, Eq)]

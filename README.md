@@ -22,3 +22,8 @@ Example configuration files for any automatons that have been implemented so far
 ### DFA
 - `dfa01.json`: Accepts all strings over $\Sigma = \{a, b\}$ which have `aa` as a substring
 - `dfa02.json`: Accepts all strings over $\Sigma = \{0, 1\}$ which have odd number of 1's and odd number of 0's.
+
+### NFA
+- `nfa01.json`: Accepts all strings over $\Sigma = \{a, b\}$ which end in `ab`
+- `nfa02.json`: Accepts all strings over $\Sigma = \{a, b\}$ which start with `a`
+- `nfa02.json`: Accepts all strings that match the regular expression $\regex{(b)^\ast a}$
