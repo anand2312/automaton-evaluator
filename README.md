@@ -26,4 +26,4 @@ Example configuration files for any automatons that have been implemented so far
 ### NFA
 - `nfa01.json`: Accepts all strings over $\Sigma = \{a, b\}$ which end in `ab`
 - `nfa02.json`: Accepts all strings over $\Sigma = \{a, b\}$ which start with `a`
-- `nfa02.json`: Accepts all strings that match the regular expression $\regex{(b)^\ast a}$
+- `nfa02.json`: Accepts all strings that match the regular expression $(b)^\ast a$
