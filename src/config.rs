@@ -1,4 +1,4 @@
-#![cfg(feature="build-binary")]
+#![cfg(feature = "build-binary")]
 use serde::{Deserialize, Serialize};
 use std::collections::HashSet;
 use std::{fs, path::PathBuf};
@@ -37,4 +37,4 @@ pub trait ReadFAConfig {
         let config = FAConfig::from_file(path);
         Self::from_config(config)
     }
-}   
+}

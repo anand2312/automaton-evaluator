@@ -1,7 +1,7 @@
-use crate::traits::{Acceptor};
-use std::collections::{HashMap, HashSet};
-#[cfg(feature="build-binary")]
+#[cfg(feature = "build-binary")]
 use crate::config::*;
+use crate::traits::Acceptor;
+use std::collections::{HashMap, HashSet};
 
 #[derive(Debug)]
 pub struct DFA {
@@ -12,7 +12,7 @@ pub struct DFA {
     pub transitions: Vec<Vec<Vec<char>>>, // adjacency matrix for the state graph
 }
 
-#[cfg(feature="build-binary")]
+#[cfg(feature = "build-binary")]
 impl ReadFAConfig for DFA {
     fn from_config(config: FAConfig) -> Self {
         let mut states = HashMap::new();
@@ -20,10 +20,7 @@ impl ReadFAConfig for DFA {
         let mut initial_state: usize = usize::MAX;
 
         for (idx, name) in config.states.into_iter().enumerate() {
-            states.insert(
-                idx,
-                name.clone(),
-            );
+            states.insert(idx, name.clone());
             state_to_idx.insert(name.clone(), idx);
             if name == config.initial_state {
                 initial_state = idx;

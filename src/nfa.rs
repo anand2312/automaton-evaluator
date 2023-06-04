@@ -1,7 +1,7 @@
+#[cfg(feature = "build-binary")]
+use crate::config::*;
 use crate::traits::Acceptor;
 use std::collections::{HashMap, HashSet};
-#[cfg(feature="build-binary")]
-use crate::config::*;
 
 #[derive(Debug)]
 pub struct NFA {
@@ -13,16 +13,21 @@ pub struct NFA {
 }
 
 impl NFA {
-    pub fn new(states: HashMap<usize, String>, initial_state: usize, final_states: HashSet<usize>, transitions: Vec<Vec<Vec<char>>>) -> Self {
+    pub fn new(
+        states: HashMap<usize, String>,
+        initial_state: usize,
+        final_states: HashSet<usize>,
+        transitions: Vec<Vec<Vec<char>>>,
+    ) -> Self {
         Self {
             states,
             initial_state,
             final_states,
-            transitions
+            transitions,
         }
     }
 }
-#[cfg(feature="build-binary")]
+#[cfg(feature = "build-binary")]
 impl ReadFAConfig for NFA {
     fn from_config(config: FAConfig) -> Self {
         let epsilon = '\u{03F5}';
@@ -38,10 +43,7 @@ impl ReadFAConfig for NFA {
         }
 
         for (idx, name) in config.states.into_iter().enumerate() {
-            states.insert(
-                idx,
-                name.clone(),
-            );
+            states.insert(idx, name.clone());
             state_to_idx.insert(name.clone(), idx);
             if name == config.initial_state {
                 initial_state = idx;
@@ -170,7 +172,11 @@ fn null_closure(nfa: &NFA, current_states: HashSet<usize>) -> HashSet<usize> {
     next_closure
 }
 
-fn current_states_after_consuming_char(nfa: &NFA, current_states: HashSet<usize>, current_char: char) -> HashSet<usize> {
+fn current_states_after_consuming_char(
+    nfa: &NFA,
+    current_states: HashSet<usize>,
+    current_char: char,
+) -> HashSet<usize> {
     let closure = null_closure(nfa, current_states);
     let mut next_states = HashSet::new();
     for state in closure {
@@ -195,9 +201,12 @@ fn acceptor(nfa: &NFA, s: String) -> bool {
 
 #[cfg(test)]
 mod tests {
-    use std::path::PathBuf;
-    use crate::{config::ReadFAConfig, nfa::{_backtrack, acceptor}};
     use super::NFA;
+    use crate::{
+        config::ReadFAConfig,
+        nfa::{_backtrack, acceptor},
+    };
+    use std::path::PathBuf;
 
     #[test]
     fn test_nfa01() {
@@ -209,7 +218,15 @@ mod tests {
         let nfa = NFA::from_file(path);
         let test_cases = ["abbbab", "bab", "b", "", "bbbbbbbbbba"];
         for input in test_cases {
-            assert_eq!(_backtrack(&nfa, nfa.initial_state, 0, &input.clone().chars().collect::<Vec<char>>()), acceptor(&nfa, input.to_owned()));
+            assert_eq!(
+                _backtrack(
+                    &nfa,
+                    nfa.initial_state,
+                    0,
+                    &input.clone().chars().collect::<Vec<char>>()
+                ),
+                acceptor(&nfa, input.to_owned())
+            );
         }
     }
 
@@ -221,7 +238,15 @@ mod tests {
         let nfa = NFA::from_file(path);
         let test_cases = ["abbbab", "bab", "b", "", "bbbbbbbbbba", "a"];
         for input in test_cases {
-            assert_eq!(_backtrack(&nfa, nfa.initial_state, 0, &input.clone().chars().collect::<Vec<char>>()), acceptor(&nfa, input.to_owned()));
+            assert_eq!(
+                _backtrack(
+                    &nfa,
+                    nfa.initial_state,
+                    0,
+                    &input.clone().chars().collect::<Vec<char>>()
+                ),
+                acceptor(&nfa, input.to_owned())
+            );
         }
     }
 
@@ -233,7 +258,15 @@ mod tests {
         let nfa = NFA::from_file(path);
         let test_cases = ["abbbab", "bab", "b", "a", "bba", "bbbba"];
         for input in test_cases {
-            assert_eq!(_backtrack(&nfa, nfa.initial_state, 0, &input.clone().chars().collect::<Vec<char>>()), acceptor(&nfa, input.to_owned()));
+            assert_eq!(
+                _backtrack(
+                    &nfa,
+                    nfa.initial_state,
+                    0,
+                    &input.clone().chars().collect::<Vec<char>>()
+                ),
+                acceptor(&nfa, input.to_owned())
+            );
         }
     }
 }

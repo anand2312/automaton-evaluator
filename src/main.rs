@@ -1,4 +1,4 @@
-use automaton_evaluator::{dfa::DFA, nfa::NFA, config::ReadFAConfig, traits::Acceptor};
+use automaton_evaluator::{config::ReadFAConfig, dfa::DFA, nfa::NFA, traits::Acceptor};
 use clap::{builder::PossibleValue, Parser, ValueEnum};
 use std::path::PathBuf;
 
