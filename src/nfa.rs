@@ -12,6 +12,16 @@ pub struct NFA {
     pub transitions: Vec<Vec<Vec<char>>>, // adjacency matrix for the state graph
 }
 
+impl NFA {
+    pub fn new(states: HashMap<usize, String>, initial_state: usize, final_states: HashSet<usize>, transitions: Vec<Vec<Vec<char>>>) -> Self {
+        Self {
+            states,
+            initial_state,
+            final_states,
+            transitions
+        }
+    }
+}
 #[cfg(feature="build-binary")]
 impl ReadFAConfig for NFA {
     fn from_config(config: FAConfig) -> Self {
