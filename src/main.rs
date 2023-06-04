@@ -1,11 +1,5 @@
-mod dfa;
-mod fa;
-mod nfa;
-
+use automaton_evaluator::{dfa::DFA, nfa::NFA, config::ReadFAConfig, traits::Acceptor};
 use clap::{builder::PossibleValue, Parser, ValueEnum};
-use dfa::DFA;
-use fa::{Acceptor, ReadFAConfig};
-use nfa::NFA;
 use std::path::PathBuf;
 
 #[derive(Debug, Parser)]

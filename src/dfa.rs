@@ -1,16 +1,18 @@
-use crate::fa::{Acceptor, FAConfig, ReadFAConfig, State};
+use crate::traits::{Acceptor};
 use std::collections::{HashMap, HashSet};
-use std::path::PathBuf;
+#[cfg(feature="build-binary")]
+use crate::config::*;
 
 #[derive(Debug)]
 pub struct DFA {
     /// Evaluate and validate the DFA described by a given DFAConfig
-    states: HashMap<usize, State>,
+    states: HashMap<usize, String>,
     initial_state: usize,
     final_states: HashSet<usize>,
     transitions: Vec<Vec<Vec<char>>>, // adjacency matrix for the state graph
 }
 
+#[cfg(feature="build-binary")]
 impl ReadFAConfig for DFA {
     fn from_config(config: FAConfig) -> Self {
         let mut states = HashMap::new();
@@ -20,10 +22,7 @@ impl ReadFAConfig for DFA {
         for (idx, name) in config.states.into_iter().enumerate() {
             states.insert(
                 idx,
-                State {
-                    name: name.clone(),
-                    index: idx,
-                },
+                name.clone(),
             );
             state_to_idx.insert(name.clone(), idx);
             if name == config.initial_state {

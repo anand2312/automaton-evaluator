@@ -1,3 +1,4 @@
+#![cfg(feature="build-binary")]
 use serde::{Deserialize, Serialize};
 use std::collections::HashSet;
 use std::{fs, path::PathBuf};
@@ -19,23 +20,12 @@ pub struct Transition {
     pub on: Option<String>,
 }
 
-#[derive(Debug, Hash, PartialEq, Eq)]
-pub struct State {
-    pub name: String,
-    pub index: usize,
-}
-
 impl FAConfig {
     pub fn from_file(path: PathBuf) -> Self {
         let s = fs::read_to_string(path).unwrap();
         let parsed: FAConfig = serde_json::from_str(s.as_str()).unwrap();
         parsed
     }
-}
-
-pub trait Acceptor {
-    /// All acceptor automata will implement this trait.
-    fn test_string(&self, s: String) -> bool;
 }
 
 pub trait ReadFAConfig {
@@ -47,4 +37,4 @@ pub trait ReadFAConfig {
         let config = FAConfig::from_file(path);
         Self::from_config(config)
     }
-}
+}   
