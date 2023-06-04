@@ -12,11 +12,6 @@ pub struct DFA {
 }
 
 impl ReadFAConfig for DFA {
-    fn from_file(path: PathBuf) -> Self {
-        let config = FAConfig::from_file(path);
-        Self::from_config(config)
-    }
-
     fn from_config(config: FAConfig) -> Self {
         let mut states = HashMap::new();
         let mut state_to_idx: HashMap<String, usize> = HashMap::new();

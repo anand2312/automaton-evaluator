@@ -12,11 +12,6 @@ pub struct NFA {
 }
 
 impl ReadFAConfig for NFA {
-    fn from_file(path: PathBuf) -> Self {
-        let config = FAConfig::from_file(path);
-        Self::from_config(config)
-    }
-
     fn from_config(config: FAConfig) -> Self {
         let epsilon = '\u{03F5}';
         let mut states = HashMap::new();
