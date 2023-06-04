@@ -6,10 +6,10 @@ use crate::config::*;
 #[derive(Debug)]
 pub struct NFA {
     /// Evaluate and validate the DFA described by a given DFAConfig
-    states: HashMap<usize, String>,
-    initial_state: usize,
-    final_states: HashSet<usize>,
-    transitions: Vec<Vec<Vec<char>>>, // adjacency matrix for the state graph
+    pub states: HashMap<usize, String>,
+    pub initial_state: usize,
+    pub final_states: HashSet<usize>,
+    pub transitions: Vec<Vec<Vec<char>>>, // adjacency matrix for the state graph
 }
 
 #[cfg(feature="build-binary")]
