@@ -13,7 +13,7 @@ List of features I'd like to implement (highly unlikely):
 
 ## Example usage
 ```bash
-$ cargo run -- /path/to/config.json --automaton=dfa --string=abaaaba
+$ cargo run --features build-binary -- /path/to/config.json --automaton=dfa --string=abaaaba
 Accepted
 ```
 
